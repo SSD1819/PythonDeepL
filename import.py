@@ -7,11 +7,16 @@ sample = pd.read_csv("data/sample_submission.csv")
 
 # Nb NAs
 train.count()
+train.isna().sum() #directement le nombre des NAs
+
+#je pense il faut aussi supprimer "belongs_to_collection" colonne
 
 ##### Suppression de nos variables qui ne nous servent à rien #####
 train = train.drop(['homepage','imdb_id','overview','poster_path','status','tagline','crew'],axis=1,errors='ignore')
 test = test.drop(['homepage','imdb_id','overview','poster_path','status','tagline','crew'],axis=1,errors='ignore')
 
+#j'ai des doutes qu'il faut supprimer 'crew'
+train = train.drop(['homepage','imdb_id','overview','poster_path','status','tagline','crew']
 ##### Mise en forme de nos colonnes qui sont des espèces de listes #####
 
 #Fonction qui sert à
