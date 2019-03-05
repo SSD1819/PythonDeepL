@@ -1,0 +1,11 @@
+
+import numpy as np
+import matplotlib.pyplot as plt
+from sklearn.linear_model import LinearRegression
+
+modeleReg=LinearRegression()
+noms = train.columns.drop["revenue"]
+X = train[noms]
+y =  train.revenue
+
+modeleReg.fit(X,y)
