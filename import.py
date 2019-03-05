@@ -1,4 +1,3 @@
-import numpy as np
 import pandas as pd
 
 test=pd.read_csv("data/test.csv")
