@@ -5,6 +5,12 @@ test = pd.read_csv("data/test.csv")
 train = pd.read_csv("data/train.csv")
 sample = pd.read_csv("data/sample_submission.csv")
 
+# Nb NAs
+train.count()
+
+##### Suppression de nos variables qui ne nous servent à rien #####
+train = train.drop(['homepage','imdb_id','overview','poster_path','status','tagline','crew'],axis=1,errors='ignore')
+test = test.drop(['homepage','imdb_id','overview','poster_path','status','tagline','crew'],axis=1,errors='ignore')
 
 ##### Mise en forme de nos colonnes qui sont des espèces de listes #####
 
@@ -15,9 +21,6 @@ def get_dictionary(s):
     except:
         d = {}
     return d
-
-testo = test['genres']
-testo = test['genres'].map(lambda x: sorted([d['name'] for d in eval(x)])).map(lambda x: ','.join(map(str, x)))
 
 testo = test
 testo['genres'] = testo['genres'].map(lambda x: sorted([d['name'] for d in get_dictionary(x)])).map(lambda x: ','.join(map(str, x)))
