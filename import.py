@@ -82,6 +82,6 @@ testLang = testClean.spoken_languages.str.get_dummies(sep=',')
 trainSamp = pd.concat([trainClean, trainGenres, trainProdPays, trainLang], axis=1)
 testSamp = pd.concat([testClean, testGenres, testProdPays, testLang], axis=1)
 
-#Suppression des variables en trop (remplacées par des tableaux disjonctifs )
+#Suppression des variables en trop (remplacées par des tableaux disjonctifs)
 trainSamp = trainSamp.drop(['genres','production_countries','spoken_languages','Keywords'],axis=1,errors='ignore')
 testSamp = testSamp.drop(['genres','production_countries','spoken_languages','Keywords'],axis=1,errors='ignore')
