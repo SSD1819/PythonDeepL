@@ -3,6 +3,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from sklearn.linear_model import LinearRegression
 
+#Reg
 modeleReg=LinearRegression()
 noms = train.columns.drop["revenue"]
 X = train[noms]
