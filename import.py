@@ -1,4 +1,6 @@
 import pandas as pd
+import datetime as dt
+import time
 
 ##### Importation de nos dataframes #####
 train = pd.read_csv("data/train.csv")
@@ -13,6 +15,33 @@ train.isna().sum() #directement le nombre des NAs
 ##### Suppression de nos variables qui ne nous servent à rien #####
 train = train.drop(['belongs_to_collection','homepage','imdb_id','overview','poster_path','status','tagline'],axis=1,errors='ignore')
 test = test.drop(['belongs_to_collection','homepage','imdb_id','overview','poster_path','status','tagline'],axis=1,errors='ignore')
+
+##### Gestion des dates #####
+
+#Récupération de l'annee et du mois pour train
+anneeTrain = list(train.release_date)
+sortieYTrain = list(train.release_date)
+sortieMTrain = list(train.release_date)
+
+for i in range(0,len(anneeTrain)):
+    dteStruct = time.strptime(anneeTrain[i], '%m/%d/%y')
+    sortieYTrain[i] = dt.datetime(*dteStruct[0:3]).year
+    sortieMTrain[i] = str(dt.datetime(*dteStruct[0:3]).month)
+
+#Récupération de l'annee et du mois pour test
+anneeTest = list(test.release_date)
+sortieYTest = list(test.release_date)
+sortieMTest = list(test.release_date)
+
+for i in range(0,len(anneeTest)):
+    try:
+        dteStruct = time.strptime(anneeTest[i], '%m/%d/%y')
+        sortieYTest[i] = dt.datetime(*dteStruct[0:3]).year
+        sortieMTest[i] = str(dt.datetime(*dteStruct[0:3]).month)
+    except:
+        sortieYTest[i] = "nan"
+        sortieMTest[i] = "nan"
+
 
 ##### Mise en forme de nos colonnes qui sont des espèces de listes #####
 
@@ -64,6 +93,10 @@ testProdComp = testClean.production_companies.str.get_dummies(sep=',')
 trainProdPays = trainClean.production_countries.str.get_dummies(sep=',')
 testProdPays = testClean.production_countries.str.get_dummies(sep=',')
 
+#Langue VO (ça ne sera normalement plus nécéssaire de le mettre en tableau disjonctif complet)
+trainVO = trainClean.original_language.str.get_dummies(sep=',')
+testVO = testClean.original_language.str.get_dummies(sep=',')
+
 #langues parlées
 trainLang = trainClean.spoken_languages.str.get_dummies(sep=',')
 testLang = testClean.spoken_languages.str.get_dummies(sep=',')
@@ -76,12 +109,18 @@ testLang = testClean.spoken_languages.str.get_dummies(sep=',')
 ###Mise en forme simple pour ceux qui n'ont qu'une seule modalité (genre le producteur, mais je m'en occupe plus tard)
 
 
-
-
 ###Concatenation de nos donnees (compagnie de production pas mise en tableau disjonctif pour l'instant)
-trainSamp = pd.concat([trainClean, trainGenres, trainProdPays, trainLang], axis=1)
-testSamp = pd.concat([testClean, testGenres, testProdPays, testLang], axis=1)
+
+#Transfo des liste annees et mois en df
+sortieYTrainDF = pd.DataFrame(sortieYTrain)
+sortieMTrainDF = pd.DataFrame(sortieMTrain)
+sortieYTestDF = pd.DataFrame(sortieYTest) #Remmetre en int (erreur du NA de merde en 828)
+sortieMTestDF = pd.DataFrame(sortieMTest)
+
+#concatenation
+trainSamp = pd.concat([trainClean, sortieYTrainDF, sortieMTrainDF, trainGenres, trainProdPays, trainLang, trainVO], axis=1)
+testSamp = pd.concat([testClean, sortieYTestDF, sortieMTestDF, testGenres, testProdPays, testLang, testVO], axis=1)
 
 #Suppression des variables en trop (remplacées par des tableaux disjonctifs)
-trainSamp = trainSamp.drop(['genres','production_countries','spoken_languages','Keywords'],axis=1,errors='ignore')
-testSamp = testSamp.drop(['genres','production_countries','spoken_languages','Keywords'],axis=1,errors='ignore')
+trainSamp = trainSamp.drop(['release_date','genres','production_countries','original_language','spoken_languages','Keywords'],axis=1,errors='ignore')
+testSamp = testSamp.drop(['release_date','genres','production_countries','original_language','spoken_languages','Keywords'],axis=1,errors='ignore')
